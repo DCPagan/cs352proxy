@@ -1,21 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<unistd.h>
-#include<stdarg.h>
-#include<errno.h>
-#include<fcntl.h>
-#include<pthread.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<net/if.h>
-#include<arpa/inet.h>
-#include<linux/if_tun.h>
-#include<sys/socket.h>
-#include<sys/ioctl.h>
-#include<sys/select.h>
-#include<sys/time.h>
-
+#include"cs352proxy.h"
 /**************************************************
   * allocate_tunnel:
   * open a tun or tap device and returns the file

@@ -8,7 +8,6 @@ int main(int argc, char **argv){
 	tap=malloc(sizeof(struct sockaddr_in));
 	memset(*tap, 0, sizeof(struct sockaddr_in));
 	ethfd=socket(AF_INET, SOCK_STREAM, 0);
-	tapfd=socket(AF_INET, SOCK_STREAM, 0);
 	switch(argc){
 		// 1st proxy
 		case 3:
@@ -20,14 +19,12 @@ int main(int argc, char **argv){
 						"1024-65535.\n");
 					exit(1);
 				}
-				sin->sin_port=port;
 			}
 			else{
 				fprintf(stderr, "ERROR: port parameter "
 					"not an unsigned short.\n");
 				exit(1);
 			}
-
 			break;
 		// 2nd proxy
 		case 4:
