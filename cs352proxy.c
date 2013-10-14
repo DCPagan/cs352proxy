@@ -30,11 +30,11 @@ int open_listenfd(int port){
 	struct sockaddr_in *serveraddr;
 	if((listenfd=socket(AF_INET, SOCK_STREAM, 0))<0){
 		perror("error creating socket\n");
-		exit(1);
+		return -1;
 	}
 	if(listen(listenfd, BACKLOG)<0){
 		perror("error making socket a listening socket\n");
-		exit(1);
+		return -1;
 	}
 	serveraddr=(struct sockaddr_in *)malloc(sizeof(struct sockaddr_in));
 	memset(serveraddr, 0, sizeof(struct sockaddr_in));
@@ -44,7 +44,7 @@ int open_listenfd(int port){
 	if(bind(listenfd, (struct sockaddr *)serveraddr,
 		sizeof(struct sockaddr_in))<0){
 		perror("error binding socketfd to port\n");
-		exit(1);
+		return -1;
 	}
 	return listenfd;
 }
