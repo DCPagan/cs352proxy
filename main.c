@@ -31,6 +31,34 @@ int main(int argc, char **argv){
 				exit(1);
 			}
 			break;
+			
+			eth->sin_addr.s_addr=htonl(INADDR_ANY);
+			eth->sin_port=htons(port);
+			if(bind(ethfd, (struct sockaddr *)&eth, sizeof(eth))<0){
+				perror("error binding ethfd to port\n");
+				exit(1);
+			}
+			if(listen(ethfd, BACKLOG)<0){
+				perror("error converting ethfd into listening socket\n");
+				exit(1);
+			}
+
+			tap->sin_addr.s_addr=htonl(INADDR_ANY);
+			tap->sin_port=htons(port);
+			if(bind(tapfd, (struct sockaddr *)&tap, sizeof(tap))<0){
+				perror("error binding tapfd to port\n");
+				exit(1);
+			}
+			if(listen(tapfd, BACKLOG)<0){
+				perror("error converting tapfd into listening socket\n");
+				exit(1);
+			}
+			
+			/**
+			  * 1st thread listens to TCP socket
+			  * 2nd thread listens to tap device
+			  */
+
 		// 2nd proxy
 		case 4:
 			break;
