@@ -4,6 +4,7 @@ int main(int argc, char **argv){
 	char *c;
 	int ethfd, tapfd;
 	unsigned short port;
+	pthread_t eth_tid, tap_tid;
 	switch(argc){
 		// 1st proxy
 		case 3:
@@ -41,6 +42,12 @@ int main(int argc, char **argv){
 			  * 2nd thread listens to tap device
 			  */
 
+			Pthread_create(&eth_tid, NULL, eth_thread, &ethfd);
+			Pthread_create(&tap_tid, NULL, tap_thread, &tapfd);
+			Pthread_join(eth_tid, NULL);
+			Pthread_join(tap_tid, NULL);
+			close(ethfd);
+			close(tapfd);
 			break;
 
 		// 2nd proxy
@@ -50,6 +57,5 @@ int main(int argc, char **argv){
 			perror("ERROR: invalid parameters.\n");
 			exit(1);
 	}
-	close(ethfd);
-	close(tapfd);
+	return 0;
 }

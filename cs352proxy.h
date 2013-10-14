@@ -20,3 +20,5 @@
 extern int allocate_tunnel(char *, int);
 extern int open_listenfd(int);
 extern int open_clientfd(char *, int);
+extern void *eth_thread(int ethfd);
+extern void *tap_thread(int tapfd);

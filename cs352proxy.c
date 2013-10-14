@@ -74,3 +74,11 @@ int open_clientfd(char *hostname, unsigned short port){
 	}
 	return clientfd;
 }
+void *eth_thread(int ethfd){
+	while(1){
+	}
+}
+void *tap_thread(int tapfd){
+	while(1){
+	}
+}
