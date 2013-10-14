@@ -53,6 +53,12 @@ int main(int argc, char **argv){
 				perror("error converting tapfd into listening socket\n");
 				exit(1);
 			}
+			
+			/**
+			  * 1st thread listens to TCP socket
+			  * 2nd thread listens to tap device
+			  */
+
 		// 2nd proxy
 		case 4:
 			break;
