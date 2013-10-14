@@ -8,7 +8,6 @@ int main(int argc, char **argv){
 	tap=malloc(sizeof(struct sockaddr_in));
 	memset(*tap, 0, sizeof(struct sockaddr_in));
 	ethfd=socket(AF_INET, SOCK_STREAM, 0);
-	tapfd=socket(AF_INET, SOCK_STREAM, 0);
 	switch(argc){
 		// 1st proxy
 		case 3:
@@ -16,24 +15,27 @@ int main(int argc, char **argv){
 			if(*c='\0'){
 				port=(unsigned short)atoi(argv[1]);
 				if(port<1024){
-					fprintf(stderr, "ERROR: port must be from "
+					perror("ERROR: port must be from "
 						"1024-65535.\n");
 					exit(1);
 				}
-				sin->sin_port=port;
 			}
 			else{
-				fprintf(stderr, "ERROR: port parameter "
+				perror("ERROR: port parameter "
 					"not an unsigned short.\n");
 				exit(1);
 			}
-
+			if((tapfd=allocate_tunnel(argv[2], IFF_TAP|IFF_NO_PI))
+				<0){
+				perror("Opening tap interface failed!\n");
+				exit(1);
+			}
 			break;
 		// 2nd proxy
 		case 4:
 			break;
 		default:
-			fprintf(stderr, "ERROR: invalid parameters.\n");
+			perror("ERROR: invalid parameters.\n");
 			exit(1);
 	}
 }
