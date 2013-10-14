@@ -88,7 +88,7 @@ ssize_t write_to_tap(int client_fd, char* buffer, size_t length){
 	return counter;
 }
 
-ssize_t read_tap(int socket_fd, char* buffer, size_t length){
+ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 	ssize_t currRead, counter=0;
 	while(length > 0){
 		currRead = read(socket_fd, buffer, length);
