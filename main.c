@@ -50,4 +50,6 @@ int main(int argc, char **argv){
 			perror("ERROR: invalid parameters.\n");
 			exit(1);
 	}
+	close(ethfd);
+	close(tapfd);
 }
