@@ -76,9 +76,15 @@ int open_clientfd(char *hostname, unsigned short port){
 }
 void *eth_thread(int ethfd){
 	while(1){
+		/**
+		  * Insert ethernet device handling code here.
+		  */
 	}
 }
 void *tap_thread(int tapfd){
 	while(1){
+		/**
+		  * Insert tap device handling code here.
+		  */
 	}
 }
