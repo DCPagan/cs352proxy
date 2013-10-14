@@ -16,4 +16,7 @@
 #include<sys/select.h>
 #include<sys/time.h>
 
+#define BACKLOG 16
 extern int allocate_tunnel(char *, int);
+extern int open_listenfd(int);
+extern int open_clientfd(char *, int);
