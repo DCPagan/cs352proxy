@@ -106,7 +106,7 @@ ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 	return counter;
 }
 
-void *eth_thread(){
+void *eth_thread(thread_param *tp){
 	ssize_t size;
 	char buffer[1500];
 	memset(buffer, '0', sizeof(buffer));
@@ -137,7 +137,7 @@ void *eth_thread(int ethfd){
 	}
 }
 */
-void *tap_thread(){
+void *tap_thread(thread_param *tp){
 	ssize_t size;
 	char buffer[1500];
 	memset(buffer, '0', sizeof(buffer));

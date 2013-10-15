@@ -4,6 +4,7 @@ int main(int argc, char **argv){
 	char *c;
 	int ethfd, tapfd;
 	unsigned short port;
+	thread_param tp;
 	pthread_t eth_tid, tap_tid;
 
 	if(argc != 4 || argc != 3){
@@ -15,25 +16,20 @@ int main(int argc, char **argv){
 		// 1st proxy
 		case 3:
 			for(c=argv[1]; isdigit(*c)||*c=='\0'; c++);
-			if(*c='\0'){
-				port=(unsigned short)atoi(argv[1]);
-				if(port<1024){
+			if(*c=='\0'){
+				ethfd=atoi(argv[1]);
+				if(ethfd<1024||ethfd>65535){
 					perror("ERROR: port must be from "
 						"1024-65535.\n");
 					exit(1);
 				}
+				port=(unsigned short)ethfd;
 			}
 			else{
 				perror("ERROR: port parameter "
-					"not an unsigned short.\n");
+					"not a decimal number.\n");
 				exit(1);
 			}
-			if((tapfd=allocate_tunnel(argv[2], IFF_TAP|IFF_NO_PI))
-				<0){
-				perror("Opening tap interface failed!\n");
-				exit(1);
-			}
-
 			if((ethfd=open_listenfd(port))<0){
 				perror("error opening ethernet device\n");
 				exit(1);
@@ -48,8 +44,10 @@ int main(int argc, char **argv){
 			  * 2nd thread listens to tap device
 			  */
 
-			Pthread_create(&eth_tid, NULL, eth_thread, &ethfd);
-			Pthread_create(&tap_tid, NULL, tap_thread, &tapfd);
+			tp.ethfd=ethfd;
+			tp.tapfd=tapfd;
+			Pthread_create(&eth_tid, NULL, eth_thread, &tp);
+			Pthread_create(&tap_tid, NULL, tap_thread, &tp);
 			Pthread_join(eth_tid, NULL);
 			Pthread_join(tap_tid, NULL);
 			close(ethfd);
