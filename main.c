@@ -58,6 +58,12 @@ int main(int argc, char **argv){
 
 		// 2nd proxy
 		case 4:
+			char *remote_host = argv[1];
+			int remote_port = argv[2];
+			char *local_interface = argv[3];
+
+			ethfd = open_clientfd(remote_host, remote_port);
+			tapfd = allocate_tunnel(local_interface, IFF_TAP|IFF_NO_PI);
 			break;
 		default:
 			perror("ERROR: invalid parameters.\n");
