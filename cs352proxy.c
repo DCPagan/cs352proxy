@@ -1,4 +1,7 @@
 #include"cs352proxy.h"
+
+int tap_fd = -1;
+int eth_fd = -1;
 /**************************************************
   * allocate_tunnel:
   * open a tun or tap device and returns the file
@@ -63,12 +66,12 @@ int open_clientfd(char *hostname, unsigned short port){
 		perror("error retrieving host information\n");
 		return -1;
 	}
-	memset(serveraddr, 0, sizeof(sockaddr_in));
+	memset(serveraddr, 0, sizeof(struct sockaddr_in));
 	serveraddr.sin_family=AF_INET;
 	memcpy(&serveraddr.sin_addr, hp->h_addr_list[0], hp->h_length);
 	serveraddr.sin_port=htons(port);
 	if(connect(clientfd, (struct sockaddr *)&serveraddr,
-		sizeof(sockaddr_in))<0){
+		sizeof(struct sockaddr_in))<0){
 		perror("error connecting to server\n");
 		return -1;
 	}
@@ -105,7 +108,7 @@ ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 
 void *eth_thread(){
 	ssize_t size;
-	char buffer[1500]; //Do we just pick a buffer size?
+	char buffer[1500];
 	memset(buffer, '0', sizeof(buffer));
 	while(1){
 		size = read(tap_fd, buffer, sizeof(buffer));
@@ -121,9 +124,9 @@ void *eth_thread(){
 			fprintf(stderr, "error, type not 16 bit");
 			exit(-1);
 		}
-		write(tcp_fd, &type, 2); //size of unsigned int short is 2
-		write(tcp_fd, &length, 2);
-		write(tcp_fd, buffer, size); 
+		write(eth_fd, &type, 2); //size of unsigned int short is 2
+		write(eth_fd, &length, 2);
+		write(eth_fd, buffer, size); 
 		
 	}
 } 
@@ -134,10 +137,22 @@ void *eth_thread(int ethfd){
 	}
 }
 */
-void *tap_thread(int tapfd){
+void *tap_thread(){
+	ssize_t size;
+	char buffer[1500];
+	memset(buffer, '0', sizeof(buffer));
 	while(1){
-		/**
-		  * Insert tap device handling code here.
-		  */
+		size = read(eth_fd, buffer, sizeof(buffer));
+		if(size < 1){
+			fprintf(stderr, "error, not connected");
+			exit(-1);
+		}
+		unsigned int short type, length;
+		type = ntohs(type);
+		length = ntohs(length);
+		if(type != 0xABCD){
+			fprintf(stderr, "error, incorrect type");
+			exit(-1);
+		}
 	}
 }
