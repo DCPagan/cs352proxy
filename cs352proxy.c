@@ -1,8 +1,4 @@
 #include"cs352proxy.h"
-
-int tap_fd = -1;
-int tcp_fd = -1;
-
 /**************************************************
   * allocate_tunnel:
   * open a tun or tap device and returns the file
@@ -62,16 +58,17 @@ int open_clientfd(char *hostname, unsigned short port){
 		return -1;
 	}
 	if((inet_aton(hostname, &addr))!=0)
-		hp=gethostbyaddr((const char *)&addr, sizeof(in_addr), AF_INET);
+		hp=gethostbyaddr((const char *)&addr, sizeof(struct in_addr), AF_INET);
 	else if((hp=gethostbyname(hostname))==NULL){
 		perror("error retrieving host information\n");
 		return -1;
 	}
-	memset(&serveraddr, 0, sizeof(sockaddr_in));
+	memset(serveraddr, 0, sizeof(sockaddr_in));
 	serveraddr.sin_family=AF_INET;
-	memcpy(hp->h_addr_list[0], &serveraddr.sin_addr.s_addr, hp->h_length);
+	memcpy(&serveraddr.sin_addr, hp->h_addr_list[0], hp->h_length);
 	serveraddr.sin_port=htons(port);
-	if(connect(clientfd, (struct sockaddr *)&serveraddr, sizeof(sockaddr_in))<0){
+	if(connect(clientfd, (struct sockaddr *)&serveraddr,
+		sizeof(sockaddr_in))<0){
 		perror("error connecting to server\n");
 		return -1;
 	}
