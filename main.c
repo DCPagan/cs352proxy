@@ -64,6 +64,14 @@ int main(int argc, char **argv){
 
 			ethfd = open_clientfd(remote_host, remote_port);
 			tapfd = allocate_tunnel(local_interface, IFF_TAP|IFF_NO_PI);
+
+			Pthread_create(&eth_tid, NULL, eth_thread, &ethfd);
+			Pthread_create(&tap_tid, NULL, tap_thread, &tapfd);
+			Pthread_join(eth_tid, NULL);
+			Pthread_join(tap_tid, NULL);
+			close(ethfd);
+			close(tapfd);
+			
 			break;
 		default:
 			perror("ERROR: invalid parameters.\n");

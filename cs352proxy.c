@@ -118,7 +118,7 @@ void *eth_thread(){
 		}
 		buffer[size] = '\0';
 		unsigned int short type, length;
-		type = htons(type);   //or is it ntohs()?
+		type = htons(type);  
 		length = htons(length);
 		if(type != 0xABCD){
 			fprintf(stderr, "error, type not 16 bit");
