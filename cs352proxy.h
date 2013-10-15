@@ -22,3 +22,6 @@ extern int open_listenfd(unsigned short);
 extern int open_clientfd(char *, unsigned short);
 extern void *eth_thread(int ethfd);
 extern void *tap_thread(int tapfd);
+ssize_t write_to_tap(int client_fd, char* buffer, size_t length);
+ssize_t read_from_tap(int socket_fd, char* buffer, size_t length);
+void *tcp_handle();
