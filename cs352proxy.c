@@ -106,7 +106,7 @@ ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 	return counter;
 }
 
-void *TCP_handle(){
+void *tcp_handle(){
 	ssize_t size;
 	char buffer[1500]; //Do we just pick a buffer size?
 	memset(buffer, '0', sizeof(buffer));
