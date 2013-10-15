@@ -74,8 +74,6 @@ int open_clientfd(char *hostname, unsigned short port){
 	}
 	return clientfd;
 }
-<<<<<<< HEAD
-=======
 /*not used may need to delete later*/
 ssize_t write_to_tap(int client_fd, char* buffer, size_t length){
 	ssize_t written, counter=0;
@@ -130,7 +128,6 @@ void *eth_thread(){
 	}
 } 
 /*
->>>>>>> b473439a4d6ffb7f584557aa03f09a87c4da2fc5
 void *eth_thread(int ethfd){
 	while(1){
 
