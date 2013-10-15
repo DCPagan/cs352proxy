@@ -5,6 +5,12 @@ int main(int argc, char **argv){
 	int ethfd, tapfd;
 	unsigned short port;
 	pthread_t eth_tid, tap_tid;
+
+	if(argc != 4 || argc != 3){
+		printf("Error\n\t Usage for first proxy:\n\t\t cs352proxy <port> <local interface> \n\t Usage for second proxy: \n\t\t cs352proxy <remote host> <remote port> <local interface>\n");
+	return -1;
+	}
+
 	switch(argc){
 		// 1st proxy
 		case 3:
@@ -32,7 +38,7 @@ int main(int argc, char **argv){
 				perror("error opening ethernet device\n");
 				exit(1);
 			}
-			if((tapfd=allocate_tunnel(arg[2], IFF_TAP|IFF_NO_PI))<0){
+			if((tapfd=allocate_tunnel(argv[2], IFF_TAP|IFF_NO_PI))<0){
 				perror("error opening tap device\n");
 				exit(1);
 			}
