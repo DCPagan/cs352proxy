@@ -18,7 +18,7 @@
 
 #define BACKLOG 16
 extern int allocate_tunnel(char *, int);
-extern int open_listenfd(int);
-extern int open_clientfd(char *, int);
+extern int open_listenfd(unsigned short);
+extern int open_clientfd(char *, unsigned short);
 extern void *eth_thread(int ethfd);
 extern void *tap_thread(int tapfd);

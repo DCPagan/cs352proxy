@@ -58,7 +58,7 @@ int open_clientfd(char *hostname, unsigned short port){
 		return -1;
 	}
 	if((inet_aton(hostname, &addr))!=0)
-		hp=gethostbyaddr((const char *)&addr, sizeof(in_addr), AF_INET);
+		hp=gethostbyaddr((const char *)&addr, sizeof(struct in_addr), AF_INET);
 	else if((hp=gethostbyname(hostname))==NULL){
 		perror("error retrieving host information\n");
 		return -1;
