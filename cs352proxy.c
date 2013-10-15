@@ -106,7 +106,7 @@ ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 	return counter;
 }
 
-void *tcp_handle(){
+void *eth_thread(){
 	ssize_t size;
 	char buffer[1500]; //Do we just pick a buffer size?
 	memset(buffer, '0', sizeof(buffer));
@@ -130,14 +130,13 @@ void *tcp_handle(){
 		
 	}
 } 
-
+/*
 void *eth_thread(int ethfd){
 	while(1){
-		/**
-		  * Insert ethernet device handling code here.
-		  */
+
 	}
 }
+*/
 void *tap_thread(int tapfd){
 	while(1){
 		/**
