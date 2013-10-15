@@ -1,4 +1,8 @@
 #include"cs352proxy.h"
+
+int tap_fd = -1;
+int tcp_fd = -1;
+
 /**************************************************
   * allocate_tunnel:
   * open a tun or tap device and returns the file
@@ -73,7 +77,7 @@ int open_clientfd(char *hostname, unsigned short port){
 	}
 	return clientfd;
 }
-
+/*not used may need to delete later*/
 ssize_t write_to_tap(int client_fd, char* buffer, size_t length){
 	ssize_t written, counter=0;
 	while(length > 0){
@@ -87,7 +91,7 @@ ssize_t write_to_tap(int client_fd, char* buffer, size_t length){
 	}
 	return counter;
 }
-
+/*not used may need to delete later*/
 ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 	ssize_t currRead, counter=0;
 	while(length > 0){
@@ -101,6 +105,31 @@ ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 	}
 	return counter;
 }
+
+void *TCP_handle(){
+	ssize_t size;
+	char buffer[1500]; //Do we just pick a buffer size?
+	memset(buffer, '0', sizeof(buffer));
+	while(1){
+		size = read(tap_fd, buffer, sizeof(buffer));
+		if(size < 1){	
+			fprintf(stderr, "error, not connected");
+			exit(-1);
+		}
+		buffer[size] = '\0';
+		unsigned int short type, length;
+		type = htons(type);   //or is it ntohs()?
+		length = htons(length);
+		if(type != 0xABCD){
+			fprintf(stderr, "error, type not 16 bit");
+			exit(-1);
+		}
+		write(tcp_fd, &type, 2); //size of unsigned int short is 2
+		write(tcp_fd, &length, 2);
+		write(tcp_fd, buffer, size); 
+		
+	}
+} 
 
 void *eth_thread(int ethfd){
 	while(1){
