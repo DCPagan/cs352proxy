@@ -63,9 +63,9 @@ int open_clientfd(char *hostname, unsigned short port){
 		perror("error retrieving host information\n");
 		return -1;
 	}
-	memset(&serveraddr, 0, sizeof(sockaddr_in));
+	memset(serveraddr, 0, sizeof(sockaddr_in));
 	serveraddr.sin_family=AF_INET;
-	memcpy(hp->h_addr_list[0], &serveraddr.sin_addr.s_addr, hp->h_length);
+	memcpy(&serveraddr.sin_addr, hp->h_addr_list[0], hp->h_length);
 	serveraddr.sin_port=htons(port);
 	if(connect(clientfd, (struct sockaddr *)&serveraddr,
 		sizeof(sockaddr_in))<0){
