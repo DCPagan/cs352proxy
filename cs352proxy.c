@@ -119,7 +119,7 @@ void *eth_thread(){
 		buffer[size] = '\0';
 		unsigned int short type, length;
 		type = htons(type);  
-		length = htons(length);
+		length = htons(size);
 		if(type != 0xABCD){
 			fprintf(stderr, "error, type not 16 bit");
 			exit(-1);
@@ -149,10 +149,13 @@ void *tap_thread(){
 		}
 		unsigned int short type, length;
 		type = ntohs(type);
-		length = ntohs(length);
 		if(type != 0xABCD){
 			fprintf(stderr, "error, incorrect type");
 			exit(-1);
 		}
+		length = ntohs(size);
+		//read(eth_fd, &size, 2);
+		read(eth_fd, buffer, length);
+		write(tap_fd, buffer, length);
 	}
 }
