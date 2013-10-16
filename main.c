@@ -75,7 +75,6 @@ int main(int argc, char **argv){
 			Pthread_join(tap_tid, NULL);
 			close(ethfd);
 			close(tapfd);
-			
 			break;
 		default:
 			perror("ERROR: invalid parameters.\n");
