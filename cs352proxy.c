@@ -97,7 +97,7 @@ void *eth_thread(thread_param *tp){
 			fprintf(stderr, "error, not connected");
 			close(tp->ethfd);
 			close(tp->tapfd);
-			return -1;
+			exit(-1);
 		}
 		type = ntohs((unsigned short *)(buffer[0]));
 		length=ntohs((unsigned short *)(buffer[1]));
@@ -105,7 +105,7 @@ void *eth_thread(thread_param *tp){
 			fprintf(stderr, "error, incorrect type");
 			close(tp->ethfd);
 			close(tp->tapfd);
-			return -1;
+			exit(-1);
 		}
 		write(tp->tapfd, buffer+4, BUFSIZE-4);
 	}
@@ -122,7 +122,7 @@ void *tap_thread(thread_param *tp){
 			fprintf(stderr, "error, not connected");
 			close(tp->ethfd);
 			close(tp->tapfd);
-			return -1;
+			exit(-1);
 		}
 		buffer[size] = '\0';
 		type = htons(0xABCD);  
