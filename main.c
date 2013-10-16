@@ -21,8 +21,8 @@ int main(int argc, char **argv){
 		case 3:
 			for(c=argv[1]; isdigit(*c)||*c=='\0'; c++);
 			if(*c=='\0'){
-				ethfd=atoi(argv[1]);
-				if(ethfd<1024||ethfd>65535){
+				tp.ethfd=atoi(argv[1]);
+				if(tp.ethfd<1024||tp.ethfd>65535){
 					perror("ERROR: port must be from "
 						"1024-65535.\n");
 					exit(1);
@@ -34,11 +34,11 @@ int main(int argc, char **argv){
 					"not a decimal number.\n");
 				exit(1);
 			}
-			if((ethfd=open_listenfd(port))<0){
+			if((tp.ethfd=open_listenfd(port))<0){
 				perror("error opening ethernet device\n");
 				exit(1);
 			}
-			if((tapfd=allocate_tunnel(argv[2], IFF_TAP|IFF_NO_PI))<0){
+			if((tp.tapfd=allocate_tunnel(argv[2], IFF_TAP|IFF_NO_PI))<0){
 				perror("error opening tap device\n");
 				exit(1);
 			}
