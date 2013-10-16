@@ -31,10 +31,17 @@ int allocate_tunnel(char *dev, int flags) {
 
 int open_listenfd(unsigned short port){
 	int listenfd;
+	int optval = 1;
 	struct sockaddr_in serveraddr;
 	if((listenfd=socket(AF_INET, SOCK_STREAM, 0))<0){
 		perror("error creating socket\n");
 		return -1;
+	}	
+	/* avoid EADDRINUSE error on bind() */
+	if(setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
+		(char *)&optval, sizeof(optval)) < 0) {
+		perror("setsockopt()");
+		exit(-1);
 	}
 	if(listen(listenfd, BACKLOG)<0){
 		perror("error making socket a listening socket\n");
@@ -79,6 +86,53 @@ int open_clientfd(char *hostname, unsigned short port){
 	return clientfd;
 }
 
+void *eth_thread(thread_param *tp){
+	ssize_t size;
+	char buffer[BUFSIZE];
+	unsigned int short type, length;
+	memset(buffer, '0', sizeof(buffer));
+	while(1){
+		size = read(tp->ethfd, buffer, sizeof(buffer));
+		if(size < 1){
+			fprintf(stderr, "error, not connected");
+			exit(-1);
+		}
+		type = ntohs(type);
+		if(type != 0xABCD){
+			fprintf(stderr, "error, incorrect type");
+			exit(-1);
+		}
+		read(tp->ethfd, &size, 2);
+		length = ntohs(size);
+		read(tp->ethfd, buffer, length);
+		write(tp->tapfd, buffer, length);
+	}
+}
+
+void *tap_thread(thread_param *tp){
+	ssize_t size;
+	char buffer[BUFSIZE];
+	unsigned int short type, length;
+	memset(buffer, '0', sizeof(buffer));
+	while(1){
+		size = read(tp->tapfd, buffer, sizeof(buffer));
+		if(size < 1){	
+			fprintf(stderr, "error, not connected");
+			exit(-1);
+		}
+		buffer[size] = '\0';
+		type = htons(type);  
+		length = htons(size);
+		if(type != 0xABCD){
+			fprintf(stderr, "error, type not 16 bit");
+			exit(-1);
+		}
+		write(tp->ethfd, &type, 2); //size of unsigned int short is 2
+		write(tp->ethfd, &length, 2);
+		write(tp->ethfd, buffer, size); 
+	}
+} 
+
 /*not used may need to delete later*/
 ssize_t write_to_tap(int client_fd, char* buffer, size_t length){
 	ssize_t written, counter=0;
@@ -106,51 +160,4 @@ ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
 		length = length - currRead;
 	}
 	return counter;
-}
-
-void *eth_thread(thread_param *tp){
-	ssize_t size;
-	char buffer[1500];
-	memset(buffer, '0', sizeof(buffer));
-	while(1){
-		size = read(tp->tapfd, buffer, sizeof(buffer));
-		if(size < 1){	
-			fprintf(stderr, "error, not connected");
-			exit(-1);
-		}
-		buffer[size] = '\0';
-		unsigned int short type, length;
-		type = htons(type);  
-		length = htons(size);
-		if(type != 0xABCD){
-			fprintf(stderr, "error, type not 16 bit");
-			exit(-1);
-		}
-		write(tp->ethfd, &type, 2); //size of unsigned int short is 2
-		write(tp->ethfd, &length, 2);
-		write(tp->ethfd, buffer, size); 
-	}
-} 
-
-void *tap_thread(thread_param *tp){
-	ssize_t size;
-	char buffer[1500];
-	memset(buffer, '0', sizeof(buffer));
-	while(1){
-		size = read(tp->ethfd, buffer, sizeof(buffer));
-		if(size < 1){
-			fprintf(stderr, "error, not connected");
-			exit(-1);
-		}
-		unsigned int short type, length;
-		type = ntohs(type);
-		if(type != 0xABCD){
-			fprintf(stderr, "error, incorrect type");
-			exit(-1);
-		}
-		read(tp->ethfd, &size, 2);
-		length = ntohs(size);
-		read(tp->ethfd, buffer, length);
-		write(tp->tapfd, buffer, length);
-	}
 }

@@ -18,6 +18,7 @@
 #include<sys/time.h>
 
 #define BACKLOG 16
+#define BUFSIZE 4000
 
 typedef struct thread_param{
 	int ethfd;
@@ -29,5 +30,5 @@ extern int open_listenfd(unsigned short);
 extern int open_clientfd(char *, unsigned short);
 extern void *eth_thread(thread_param *tp);
 extern void *tap_thread(thread_param *tp);
-ssize_t write_to_tap(int client_fd, char* buffer, size_t length);
-ssize_t read_from_tap(int socket_fd, char* buffer, size_t length);
+extern ssize_t write_to_tap(int client_fd, char* buffer, size_t length);
+extern ssize_t read_from_tap(int socket_fd, char* buffer, size_t length);
