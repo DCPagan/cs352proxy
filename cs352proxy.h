@@ -18,7 +18,8 @@
 #include<sys/time.h>
 
 #define BACKLOG 16
-#define BUFSIZE 4000
+//	MTU for eth0 and tap2 for both machines are 1500.
+#define BUFSIZE 1500
 
 typedef struct thread_param{
 	int ethfd;
