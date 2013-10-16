@@ -90,7 +90,7 @@ void *eth_thread(thread_param *tp){
 	ssize_t size;
 	char buffer[BUFSIZE];
 	unsigned int short type, length;
-	memset(buffer, 0, BUFSIZE));
+	memset(buffer, 0, BUFSIZE);
 	while(1){
 		size = read(tp->ethfd, buffer, sizeof(buffer));
 		if(size < 1){
@@ -132,32 +132,3 @@ void *tap_thread(thread_param *tp){
 		write(tp->ethfd, buffer, size); 
 	}
 } 
-
-/*not used may need to delete later*/
-ssize_t write_to_tap(int client_fd, char* buffer, size_t length){
-	ssize_t written, counter=0;
-	while(length > 0){
-		written = write(client_fd, buffer, length);
-		if(written == -1){
-			fprintf(stderr, "error, failed to write");
-			return -1;
-		}
-		counter = counter + written;
-		length = length - written;
-	}
-	return counter;
-}
-/*not used may need to delete later*/
-ssize_t read_from_tap(int socket_fd, char* buffer, size_t length){
-	ssize_t currRead, counter=0;
-	while(length > 0){
-		currRead = read(socket_fd, buffer, length);
-		if(currRead == -1){
-			fprintf(stderr, "error, failed to read from tap");
-			return -1;	
-		}
-		counter = counter + currRead;
-		length = length - currRead;
-	}
-	return counter;
-}
