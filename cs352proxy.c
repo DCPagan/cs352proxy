@@ -51,35 +51,6 @@ int open_listenfd(unsigned short port){
 	}
 	return listenfd;
 }
-//written by jon, exact duplicate of code from prof, still encountering dereferencing error
-/*
-int open_clientfd(char *hostname, unsigned short port){
-	struct sockaddr_in to;
-	struct hostent *hp;
-	int clientfd;
-	
-	to.sin_family = AF_INET;
-	to.sin_port = htons(port);
-	to.sin_addr.s_addr = inet_addr(hostname);
-	memset(&to, '0', sizeof(struct sockaddr_in));
-
-	if(to.sin_addr.s_addr == -1){
-		hp = gethostbyname(hostname);
-		if(hp == NULL){
-			fprintf(stderr, "error, host name not found\n");
-			return -1;
-		}
-		bcopy(hp->h_addr, &to.sin_addr, hp->length);
-	}
-	
-	clientfd = socket(AF_INET, SOCK_STREAM, 0);
-	if(connect(clientfd, &to, sizeof(to))<0){
-		fprintf(stderr, "error, failed to connect");
-		return -1;
-	}
-	return clientfd;
-}
-*/
 
 int open_clientfd(char *hostname, unsigned short port){
 	int clientfd;
@@ -98,7 +69,7 @@ int open_clientfd(char *hostname, unsigned short port){
 	}
 	memset(&serveraddr, 0, sizeof(struct sockaddr_in));
 	serveraddr.sin_family=AF_INET;
-	memcpy(&serveraddr.sin_addr, hp->h_addr_list[0], hp->h_length);
+	memcpy(&serveraddr.sin_addr, hp->h_addr_list, hp->h_length);
 	serveraddr.sin_port=htons(port);
 	if(connect(clientfd, (struct sockaddr *)&serveraddr,
 		sizeof(struct sockaddr_in))<0){
