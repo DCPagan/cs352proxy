@@ -90,7 +90,7 @@ void *eth_thread(thread_param *tp){
 	ssize_t size;
 	char buffer[BUFSIZE];
 	unsigned int short type, length;
-	memset(buffer, '0', sizeof(buffer));
+	memset(buffer, 0, BUFSIZE));
 	while(1){
 		size = read(tp->ethfd, buffer, sizeof(buffer));
 		if(size < 1){
@@ -113,7 +113,7 @@ void *tap_thread(thread_param *tp){
 	ssize_t size;
 	char buffer[BUFSIZE];
 	unsigned int short type, length;
-	memset(buffer, '0', sizeof(buffer));
+	memset(buffer, 0, BUFSIZE);
 	while(1){
 		size = read(tp->tapfd, buffer, sizeof(buffer));
 		if(size < 1){	
