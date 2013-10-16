@@ -95,12 +95,16 @@ void *eth_thread(thread_param *tp){
 		size = read(tp->ethfd, buffer, sizeof(buffer));
 		if(size < 1){
 			fprintf(stderr, "error, not connected");
-			exit(-1);
+			close(tp->ethfd);
+			close(tp->tapfd);
+			return -1;
 		}
 		type = ntohs(type);
 		if(type != 0xABCD){
 			fprintf(stderr, "error, incorrect type");
-			exit(-1);
+			close(tp->ethfd);
+			close(tp->tapfd);
+			return -1;
 		}
 		read(tp->ethfd, &size, 2);
 		length = ntohs(size);
@@ -118,14 +122,18 @@ void *tap_thread(thread_param *tp){
 		size = read(tp->tapfd, buffer, sizeof(buffer));
 		if(size < 1){	
 			fprintf(stderr, "error, not connected");
-			exit(-1);
+			close(tp->ethfd);
+			close(tp->tapfd);
+			return -1;
 		}
 		buffer[size] = '\0';
 		type = htons(type);  
 		length = htons(size);
 		if(type != 0xABCD){
 			fprintf(stderr, "error, type not 16 bit");
-			exit(-1);
+			close(tp->ethfd);
+			close(tp->tapfd);
+			return -1;
 		}
 		write(tp->ethfd, &type, 2); //size of unsigned int short is 2
 		write(tp->ethfd, &length, 2);
