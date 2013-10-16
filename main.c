@@ -26,7 +26,7 @@ int main(int argc, char **argv){
 						"1024-65535.\n");
 					exit(1);
 				}
-				port=(unsigned short)ethfd;
+				port=(unsigned short)tp.ethfd;
 			}
 			else{
 				perror("ERROR: port parameter "
@@ -65,14 +65,14 @@ int main(int argc, char **argv){
 						"1024-65535.\n");
 					exit(1);
 				}
-				port=(unsigned short)ethfd;
+				port=(unsigned short)tp.ethfd;
 			}
 			else{
 				perror("ERROR: port parameter "
 					"not a decimal number.\n");
 				exit(1);
 			}
-			if((tp.ethfd=open_clientfd(arg[1], port))<0){
+			if((tp.ethfd=open_clientfd(argv[1], port))<0){
 				perror("error opening ethernet device\n");
 				exit(1);
 			}
