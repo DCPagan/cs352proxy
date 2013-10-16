@@ -80,6 +80,12 @@ int main(int argc, char **argv){
 				perror("error opening tap device\n");
 				exit(1);
 			}
+
+			/**
+			  * 1st thread listens to TCP socket
+			  * 2nd thread listens to tap device
+			  */
+
 			Pthread_create(&eth_tid, NULL, eth_thread, &tp);
 			Pthread_create(&tap_tid, NULL, tap_thread, &tp);
 			Pthread_join(eth_tid, NULL);
