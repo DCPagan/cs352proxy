@@ -99,8 +99,8 @@ void *eth_thread(thread_param *tp){
 			close(tp->tapfd);
 			exit(-1);
 		}
-		type = ntohs((unsigned short *)(buffer[0]));
-		length=ntohs((unsigned short *)(buffer[1]));
+		type=ntohs((unsigned short)(buffer[0]));
+		length=ntohs((unsigned short)(buffer[1]));
 		if(type != 0xABCD){
 			fprintf(stderr, "error, incorrect type");
 			close(tp->ethfd);
