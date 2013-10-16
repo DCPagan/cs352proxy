@@ -2,7 +2,6 @@
 
 int main(int argc, char **argv){
 	char *c;
-	int ethfd, tapfd;
 	unsigned short port;
 	thread_param tp;
 	pthread_t eth_tid, tap_tid;
@@ -48,33 +47,45 @@ int main(int argc, char **argv){
 			  * 2nd thread listens to tap device
 			  */
 
-			tp.ethfd=ethfd;
-			tp.tapfd=tapfd;
 			Pthread_create(&eth_tid, NULL, eth_thread, &tp);
 			Pthread_create(&tap_tid, NULL, tap_thread, &tp);
 			Pthread_join(eth_tid, NULL);
 			Pthread_join(tap_tid, NULL);
-			close(ethfd);
-			close(tapfd);
+			close(tp.ethfd);
+			close(tp.tapfd);
 			break;
 
 		// 2nd proxy
 		case 4:
-			remote_host = argv[1];
-			remote_port = atoi(argv[2]);
-			local_interface = argv[3];
-
-			tp.ethfd = open_clientfd(remote_host, remote_port);
-			tp.tapfd = allocate_tunnel(local_interface, IFF_TAP|IFF_NO_PI);
-
-			tp.ethfd=ethfd;
-			tp.tapfd=tapfd;
+			for(c=argv[2]; isdigit(*c)||*c=='\0'; c++);
+			if(*c=='\0'){
+				tp.ethfd=atoi(argv[2]);
+				if(tp.ethfd<1024||tp.ethfd>65535){
+					perror("ERROR: port must be from "
+						"1024-65535.\n");
+					exit(1);
+				}
+				port=(unsigned short)ethfd;
+			}
+			else{
+				perror("ERROR: port parameter "
+					"not a decimal number.\n");
+				exit(1);
+			}
+			if((tp.ethfd=open_clientfd(arg[1], port))<0){
+				perror("error opening ethernet device\n");
+				exit(1);
+			}
+			if((tp.tapfd=allocate_tunnel(argv[3], IFF_TAP|IFF_NO_PI))<0){
+				perror("error opening tap device\n");
+				exit(1);
+			}
 			Pthread_create(&eth_tid, NULL, eth_thread, &tp);
 			Pthread_create(&tap_tid, NULL, tap_thread, &tp);
 			Pthread_join(eth_tid, NULL);
 			Pthread_join(tap_tid, NULL);
-			close(ethfd);
-			close(tapfd);
+			close(tp.ethfd);
+			close(tp.tapfd);
 			break;
 		default:
 			perror("ERROR: invalid parameters.\n");
