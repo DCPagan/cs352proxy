@@ -107,7 +107,7 @@ void *eth_thread(thread_param *tp){
 			close(tp->tapfd);
 			exit(-1);
 		}
-		write(tp->tapfd, buffer+4, BUFSIZE-4);
+		write(tp->tapfd, buffer+4, length);
 	}
 }
 
